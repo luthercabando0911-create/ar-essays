@@ -540,7 +540,7 @@ addSave.addEventListener('click', async () => {
     const { upload } = await import('https://esm.sh/@vercel/blob@2.5.0/client');
 
     const id = 'e' + Date.now();
-    const pathname = `essays/${id}__${encodeURIComponent(title)}.pdf`;
+    const pathname = `essays/${id}__${title}.pdf`;
 
     await upload(pathname, pendingFile, {
       access: 'public',
