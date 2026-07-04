@@ -2,6 +2,7 @@
   "name": "architectural-essays",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Architectural Essays reading room, backed by Vercel Blob storage.",
   "dependencies": {
     "@vercel/blob": "^2.5.0"
