@@ -376,8 +376,8 @@ footer .name{ color:var(--gray); }
    Backend: Vercel Blob storage
    - GET    /api/essays        -> list all essays
    - DELETE /api/essays?id=... -> remove one essay
-   - /api/upload                -> token endpoint for direct
-                                    browser -> Blob uploads
+   - POST   /api/upload?id=..&title=.. -> upload a PDF's raw
+            bytes; the server writes them to Blob storage.
    There's no separate database: each PDF's pathname encodes
    its own id + title (essays/<id>__<title>.pdf), so the
    "index" is just whatever Vercel Blob's list() returns.
@@ -536,17 +536,19 @@ addSave.addEventListener('click', async () => {
   formError.classList.remove('show');
 
   try{
-    // Loaded on demand so the page has no build step / bundler.
-    const { upload } = await import('https://esm.sh/@vercel/blob@2.5.0/client');
-
     const id = 'e' + Date.now();
-    const pathname = `essays/${id}__${title}.pdf`;
+    const params = new URLSearchParams({ id, title });
 
-    await upload(pathname, pendingFile, {
-      access: 'public',
-      handleUploadUrl: '/api/upload',
-      contentType: 'application/pdf',
+    const res = await fetch('/api/upload?' + params.toString(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/pdf' },
+      body: pendingFile,
     });
+
+    if(!res.ok){
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody.error || ('Upload failed (' + res.status + ')'));
+    }
 
     await loadEssays();
     closeAddModal();
