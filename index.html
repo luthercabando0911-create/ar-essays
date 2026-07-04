@@ -537,7 +537,7 @@ addSave.addEventListener('click', async () => {
 
   try{
     // Loaded on demand so the page has no build step / bundler.
-    const { upload } = await import('https://esm.sh/@vercel/blob@0.27.1/client');
+    const { upload } = await import('https://esm.sh/@vercel/blob@2.5.0/client');
 
     const id = 'e' + Date.now();
     const pathname = `essays/${id}__${encodeURIComponent(title)}.pdf`;
