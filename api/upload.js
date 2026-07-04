@@ -1,39 +1,34 @@
-import { handleUpload } from '@vercel/blob/client';
+import { put } from '@vercel/blob';
 
-// This endpoint powers CLIENT-SIDE uploads: the browser talks to Vercel Blob
-// directly (so large PDFs aren't limited by a serverless function's request
-// body size). This route only ever issues a short-lived upload token and,
-// optionally, gets notified once the upload finishes.
+// A plain server-side upload: the browser POSTs the raw PDF bytes straight
+// to this function, which writes them to Vercel Blob. Simpler and more
+// reliable than the client-token handshake, at the cost of Vercel's
+// per-function body size limit (4.5MB on Hobby). Fine for essay PDFs —
+// if you need bigger files later, we can revisit client uploads.
 
 export default async function handler(request, response) {
-  const body = request.body;
+  if (request.method !== 'POST') {
+    response.setHeader('Allow', 'POST');
+    return response.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { id, title } = request.query;
+  if (!id || !title) {
+    return response.status(400).json({ error: 'Missing id or title in query params' });
+  }
 
   try {
-    const jsonResponse = await handleUpload({
-      body,
-      request,
-      onBeforeGenerateToken: async (pathname) => {
-        // Only allow PDFs to land under essays/, named like:
-        //   essays/<id>__<url-encoded-title>.pdf
-        if (!pathname.startsWith('essays/') || !pathname.endsWith('.pdf')) {
-          throw new Error('Invalid upload path');
-        }
+    const pathname = `essays/${id}__${encodeURIComponent(title)}.pdf`;
 
-        return {
-          allowedContentTypes: ['application/pdf'],
-          addRandomSuffix: false, // keep the pathname we chose, so we can parse id/title back out
-          maximumSizeInBytes: 50 * 1024 * 1024, // 50MB per essay, adjust as needed
-        };
-      },
-      onUploadCompleted: async ({ blob }) => {
-        // Nothing else to persist — the blob's own pathname/url IS the record.
-        console.log('Essay uploaded:', blob.pathname);
-      },
+    const blob = await put(pathname, request.body, {
+      access: 'public',
+      contentType: 'application/pdf',
+      addRandomSuffix: false,
     });
 
-    return response.status(200).json(jsonResponse);
+    return response.status(200).json(blob);
   } catch (error) {
-    console.error('Upload token error:', error);
-    return response.status(400).json({ error: error.message });
+    console.error('Upload error:', error);
+    return response.status(500).json({ error: error.message });
   }
 }
