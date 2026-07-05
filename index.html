@@ -3,31 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Architectural Essays — AR135-1</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>housing — Architecture Portfolio</title>
 <style>
 
 /* =========================================================
-   TOKENS — pure monochrome, liquid glass
+   TOKENS
    ========================================================= */
 :root{
-  --black: #060606;
-  --black-2: #0d0d0d;
-  --white: #f6f6f6;
-  --gray: #9a9a9a;
-  --gray-dim: #6b6b6b;
-  --glass-fill: rgba(255,255,255,0.055);
-  --glass-fill-strong: rgba(255,255,255,0.10);
-  --glass-border: rgba(255,255,255,0.14);
-  --line: rgba(255,255,255,0.12);
+  --black: #08080a;
+  --white: #f7f6f4;
+  --gray: #a9a8a4;
+  --gray-dim: #706f6b;
+  --glass-fill: rgba(255,255,255,0.07);
+  --glass-fill-strong: rgba(255,255,255,0.12);
+  --glass-border: rgba(255,255,255,0.16);
+  --line: rgba(255,255,255,0.14);
 
-  --display: 'Sora', sans-serif;
-  --body: 'Inter', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  --display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-  --radius: 22px;
+  --radius: 20px;
   --ease: cubic-bezier(.22,1,.36,1);
 }
 
@@ -47,11 +43,9 @@ body{
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
-
 ::selection{ background:var(--white); color:var(--black); }
 a{ color:inherit; }
 button{ font-family:inherit; }
-
 a:focus-visible, button:focus-visible, input:focus-visible{
   outline: 2px solid var(--white);
   outline-offset: 3px;
@@ -59,30 +53,22 @@ a:focus-visible, button:focus-visible, input:focus-visible{
 }
 
 /* =========================================================
-   LIQUID MONOCHROME BACKDROP
+   REMOTE BACKGROUND — photo or video, full-bleed, fixed
    ========================================================= */
-.bg{
+.bg-layer{
+  position:fixed; inset:0; z-index:-2; overflow:hidden; background:#0b0b0c;
+}
+.bg-layer img, .bg-layer video{
+  width:100%; height:100%; object-fit:cover; object-position:center;
+  filter: saturate(0.92) brightness(0.72);
+}
+.bg-overlay{
+  position:fixed; inset:0; z-index:-1;
+  background: linear-gradient(180deg, rgba(6,6,7,0.55) 0%, rgba(6,6,7,0.35) 40%, rgba(6,6,7,0.75) 100%);
+}
+.bg-default{
   position:fixed; inset:0; z-index:-2;
-  background: radial-gradient(ellipse 90% 60% at 50% -10%, #161616 0%, var(--black) 60%);
-}
-.blob-field{ position:fixed; inset:0; z-index:-1; filter: blur(80px); pointer-events:none; }
-.blob{
-  position:absolute; border-radius:50%; opacity:0.16; mix-blend-mode:screen;
-  background: radial-gradient(circle, #ffffff, transparent 70%);
-  animation: drift 32s var(--ease) infinite alternate;
-}
-.blob.b1{ width:44vw; height:44vw; top:-14%; left:-10%; animation-duration:34s; }
-.blob.b2{ width:36vw; height:36vw; bottom:-16%; right:-8%; animation-duration:28s; animation-delay:-9s; opacity:0.10; }
-.blob.b3{ width:26vw; height:26vw; top:35%; left:60%; animation-duration:40s; animation-delay:-18s; opacity:0.08; }
-@keyframes drift{
-  0%{ transform:translate(0,0) scale(1); }
-  100%{ transform:translate(5%, 7%) scale(1.18); }
-}
-
-/* fine grain of streaks, echoing the marble-smoke reference */
-.streaks{
-  position:fixed; inset:0; z-index:-1; opacity:0.5; pointer-events:none;
-  background-image: repeating-linear-gradient(100deg, transparent 0px, transparent 60px, rgba(255,255,255,0.015) 61px, transparent 120px);
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #17171a 0%, var(--black) 65%);
 }
 
 /* =========================================================
@@ -90,181 +76,217 @@ a:focus-visible, button:focus-visible, input:focus-visible{
    ========================================================= */
 .glass{
   background: linear-gradient(155deg, var(--glass-fill-strong), var(--glass-fill));
-  backdrop-filter: blur(24px) saturate(120%);
-  -webkit-backdrop-filter: blur(24px) saturate(120%);
+  backdrop-filter: blur(26px) saturate(140%);
+  -webkit-backdrop-filter: blur(26px) saturate(140%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.12) inset,
-    0 24px 50px -24px rgba(0,0,0,0.7);
-  position:relative;
-  overflow:hidden;
+    0 1px 0 rgba(255,255,255,0.14) inset,
+    0 24px 60px -28px rgba(0,0,0,0.75);
 }
-.glass::after{
-  content:"";
-  position:absolute; top:-50%; left:-60%;
-  width:36%; height:200%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.14), transparent);
-  transform: rotate(20deg);
-  transition: left 0.9s var(--ease);
-  pointer-events:none;
-}
-.glass:hover::after{ left:130%; }
 
 /* =========================================================
-   COVER / TITLE BLOCK — no nav, this IS the top of the page
+   BACKGROUND-SETTINGS BUTTON (top right, minimal)
+   ========================================================= */
+.bg-control{
+  position:fixed; top:22px; right:22px; z-index:40;
+  width:44px; height:44px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--white); border:1px solid var(--glass-border);
+  transition: background .2s;
+}
+.bg-control:hover{ background: rgba(255,255,255,0.12); }
+.bg-control svg{ width:18px; height:18px; }
+
+/* =========================================================
+   HERO / COVER
    ========================================================= */
 .cover{
-  min-height:100svh;
+  min-height:100svh; position:relative;
   display:flex; align-items:center; justify-content:center;
   padding: 8vh 6vw;
 }
-.cover-panel{
-  width:min(760px, 100%);
-  padding: 56px 48px;
-  text-align:center;
-}
+.cover-inner{ text-align:center; max-width:820px; }
 .cover-kicker{
-  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.22em; text-transform:uppercase;
-  color:var(--gray); margin:0 0 22px;
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--gray); margin:0 0 26px;
 }
 .cover h1{
   font-family:var(--display); font-weight:700; letter-spacing:-0.01em;
-  font-size:clamp(2.2rem, 6vw, 3.6rem); line-height:1.05; margin:0 0 26px; color:var(--white);
+  font-size:clamp(3.2rem, 11vw, 7.5rem); line-height:0.98; margin:0 0 30px; color:var(--white);
 }
-.cover-rule{ width:56px; height:1px; background:var(--line); margin:0 auto 26px; }
+.cover-rule{ width:48px; height:1px; background:var(--line); margin:0 auto 26px; }
 .cover-meta{
   display:flex; flex-direction:column; gap:8px; align-items:center;
-  font-family:var(--mono); font-size:0.82rem; color:var(--gray);
+  font-family:var(--mono); font-size:0.8rem; color:var(--gray);
 }
-.cover-meta .name{ color:var(--white); font-size:0.95rem; }
-.cover-meta .to{ margin-top:14px; color:var(--gray-dim); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; }
-.cover-meta .prof{ color:var(--gray); }
+.cover-meta .name{ color:var(--white); font-size:0.92rem; }
+.cover-meta .to{ margin-top:14px; color:var(--gray-dim); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; }
 
 .scrollcue{
   position:absolute; bottom:34px; left:50%; transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:8px;
-  color:var(--gray-dim); font-family:var(--mono); font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--gray); font-family:var(--mono); font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase;
 }
 .scrollcue svg{ width:14px; height:14px; animation: bob 2.2s ease-in-out infinite; }
 @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(6px);} }
-.cover{ position:relative; }
 
 /* =========================================================
-   ESSAYS SECTION
+   WORKS — Pinterest-style masonry
    ========================================================= */
-section.essays{ padding: 60px 6vw 120px; max-width:1180px; margin:0 auto; }
-.essays-head{ margin-bottom:38px; text-align:center; }
-.essays-head .kicker{
-  font-family:var(--mono); font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase;
+/* =========================================================
+   ABOUT
+   ========================================================= */
+section.about{ padding: 0 6vw 60px; max-width:820px; margin:0 auto; }
+.about-panel{ padding:44px 40px; position:relative; text-align:center; }
+.about-panel .kicker{
+  font-family:var(--mono); font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--gray); margin:0 0 16px;
+}
+.about-text{
+  font-family:var(--body); font-size:1rem; line-height:1.75; color:var(--white);
+  white-space:pre-wrap; margin:0; text-align:left;
+}
+.about-text:empty::before{
+  content:"Nothing here yet.";
+  color:var(--gray-dim); font-style:italic;
+}
+.about-edit-btn{
+  position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:9px;
+  background:var(--glass-fill); border:1px solid var(--glass-border); color:var(--gray);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background .2s, color .2s;
+}
+.about-edit-btn:hover{ background:rgba(255,255,255,0.14); color:var(--white); }
+.about-edit-btn svg{ width:14px; height:14px; }
+
+section.works{ padding: 40px 5vw 120px; max-width:1400px; margin:0 auto; }
+.works-head{ text-align:center; margin-bottom:44px; }
+.works-head .kicker{
+  font-family:var(--mono); font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase;
   color:var(--gray); margin:0 0 10px;
 }
-.essays-head h2{
-  font-family:var(--display); font-weight:600; font-size:clamp(1.5rem, 3vw, 2.1rem); margin:0; color:var(--white);
+.works-head h2{
+  font-family:var(--display); font-weight:500; font-size:clamp(1.8rem, 4vw, 2.6rem); margin:0; color:var(--white);
 }
 
-.essay-grid{
-  display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:20px;
+.masonry{
+  column-count:1; column-gap:18px;
 }
+@media (min-width:560px){ .masonry{ column-count:2; } }
+@media (min-width:900px){ .masonry{ column-count:3; } }
+@media (min-width:1280px){ .masonry{ column-count:4; } }
 
-.essay-card{
-  padding:0; cursor:pointer; text-align:left; color:inherit; font:inherit;
-  display:flex; flex-direction:column; transition: transform .3s var(--ease);
-  border:1px solid var(--glass-border);
+.tile{
+  break-inside: avoid; margin-bottom:18px; overflow:hidden;
+  cursor:pointer; position:relative; display:block; width:100%;
+  border:1px solid var(--glass-border); transition: transform .35s var(--ease);
 }
-.essay-card:hover{ transform: translateY(-4px); }
-.essay-thumb{
-  aspect-ratio: 3/4; margin:14px 14px 0; border-radius:14px;
-  background: linear-gradient(160deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
-  border:1px solid var(--line);
-  display:flex; align-items:center; justify-content:center;
-  position:relative; overflow:hidden;
+.tile:hover{ transform: translateY(-3px); }
+.tile img, .tile video.thumb{
+  width:100%; display:block; height:auto; object-fit:cover;
 }
-.essay-thumb svg{ width:32%; height:32%; opacity:0.75; color:var(--white); }
-.essay-meta{ padding:16px 16px 20px; position:relative; }
-.essay-meta h3{ font-family:var(--display); font-size:0.98rem; margin:0 0 6px; color:var(--white); line-height:1.3; }
-.essay-meta .sub{ font-family:var(--mono); font-size:0.66rem; color:var(--gray); text-transform:uppercase; letter-spacing:0.04em; }
+.tile .caption{
+  position:absolute; left:0; right:0; bottom:0; padding:14px 16px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.65), transparent);
+  font-family:var(--mono); font-size:0.68rem; letter-spacing:0.03em; color:var(--white);
+  opacity:0; transition: opacity .25s;
+}
+.tile:hover .caption{ opacity:1; }
 
-.essay-remove{
-  position:absolute; top:10px; right:10px; width:26px; height:26px; border-radius:8px;
-  background:rgba(0,0,0,0.5); border:1px solid var(--glass-border); color:var(--white);
+.tile.filecard{
+  aspect-ratio: 4/5; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; padding:20px; text-align:center;
+}
+.tile.filecard svg{ width:34px; height:34px; opacity:0.75; }
+.tile.filecard .fname{ font-family:var(--display); font-size:0.95rem; color:var(--white); line-height:1.3; }
+.tile.filecard .ftype{ font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gray); }
+
+.tile .play-badge{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:46px; height:46px; border-radius:50%; background:rgba(0,0,0,0.45);
+  border:1px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+.tile .play-badge svg{ width:16px; height:16px; color:var(--white); }
+
+.tile-remove{
+  position:absolute; top:10px; right:10px; width:28px; height:28px; border-radius:8px;
+  background:rgba(0,0,0,0.55); border:1px solid var(--glass-border); color:var(--white);
   display:flex; align-items:center; justify-content:center; cursor:pointer;
-  opacity:0; transition: opacity .2s;
+  opacity:0; transition: opacity .2s; z-index:2;
 }
-.essay-card:hover .essay-remove{ opacity:1; }
+.tile:hover .tile-remove{ opacity:1; }
 
-/* add-essay tile */
 .add-tile{
-  border:1px dashed var(--glass-border); background:transparent;
-  cursor:pointer; border-radius:var(--radius);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
-  min-height:100%; padding:40px 16px; color:var(--gray); transition: border-color .25s, color .25s, background .25s;
+  aspect-ratio: 4/5; border:1px dashed var(--glass-border); background:transparent;
+  cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  color:var(--gray); transition: border-color .25s, color .25s, background .25s; width:100%;
 }
-.add-tile:hover{ border-color:rgba(255,255,255,0.4); color:var(--white); background:var(--glass-fill); }
-.add-tile svg{ width:26px; height:26px; }
-.add-tile span{ font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; }
+.add-tile:hover{ border-color:rgba(255,255,255,0.45); color:var(--white); background:var(--glass-fill); }
+.add-tile svg{ width:24px; height:24px; }
+.add-tile span{ font-family:var(--mono); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; }
 
-.empty-note{
+.status-note{
   text-align:center; color:var(--gray-dim); font-family:var(--mono); font-size:0.72rem;
-  margin-top:22px; letter-spacing:0.02em; display:none;
+  margin-top:26px; display:none;
 }
-.empty-note.show{ display:block; }
+.status-note.show{ display:block; }
+.status-note.error{ color:#e2a3a3; }
 
 /* =========================================================
-   MODALS (shared shell)
+   MODALS
    ========================================================= */
 .modal-overlay{
   position:fixed; inset:0; z-index:100;
-  background: rgba(0,0,0,0.78);
+  background: rgba(0,0,0,0.8);
   backdrop-filter: blur(6px);
   display:flex; align-items:center; justify-content:center;
-  padding:4vh 4vw;
-  opacity:0; pointer-events:none;
+  padding:4vh 4vw; opacity:0; pointer-events:none;
   transition: opacity .3s var(--ease);
 }
 .modal-overlay.open{ opacity:1; pointer-events:auto; }
 
-/* PDF viewer modal */
 .modal{
-  width:min(920px, 100%); height:100%; max-height:88vh;
+  width:min(960px, 100%); height:100%; max-height:88vh;
   display:flex; flex-direction:column; border-radius:24px;
   transform: scale(0.96); transition: transform .3s var(--ease);
 }
 .modal-overlay.open .modal{ transform:scale(1); }
-.modal-bar{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:16px 20px; border-bottom:1px solid var(--line);
-}
-.modal-bar h4{ margin:0; font-family:var(--display); font-size:0.92rem; color:var(--white); }
+.modal-bar{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--line); }
+.modal-bar h4{ margin:0; font-family:var(--display); font-size:1rem; color:var(--white); font-weight:500; }
 .iconbtn{
   background:var(--glass-fill); border:1px solid var(--glass-border); color:var(--white);
   width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;
   cursor:pointer; transition: background .2s;
 }
 .iconbtn:hover{ background:rgba(255,255,255,0.16); }
-.modal-body{ flex:1; background:rgba(255,255,255,0.02); border-radius:0 0 24px 24px; overflow:hidden; }
+.modal-body{ flex:1; background:rgba(0,0,0,0.3); border-radius:0 0 24px 24px; overflow:auto; display:flex; align-items:center; justify-content:center; }
 .modal-body iframe{ width:100%; height:100%; border:none; }
+.modal-body img{ max-width:100%; max-height:100%; object-fit:contain; }
+.modal-body video{ max-width:100%; max-height:100%; }
+.modal-body audio{ width:80%; }
+.modal-fallback{ display:flex; flex-direction:column; align-items:center; gap:16px; color:var(--gray); padding:40px; text-align:center; }
 
-/* Add-essay form modal */
-.form-modal{ width:min(420px, 100%); padding:28px; }
-.form-modal h4{ margin:0 0 6px; font-family:var(--display); font-size:1.1rem; color:var(--white); }
+/* small form modal (add-work / background) */
+.form-modal{ width:min(440px, 100%); padding:28px; }
+.form-modal h4{ margin:0 0 6px; font-family:var(--display); font-size:1.15rem; color:var(--white); font-weight:500; }
 .form-modal p.hint{ margin:0 0 22px; color:var(--gray); font-size:0.82rem; }
 .field{ margin-bottom:16px; text-align:left; }
-.field label{ display:block; font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gray); margin-bottom:8px; }
+.field label{ display:block; font-family:var(--mono); font-size:0.64rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--gray); margin-bottom:8px; }
 .field input[type="text"]{
   width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--glass-border);
-  background:rgba(255,255,255,0.04); color:var(--white); font-family:var(--body); font-size:0.9rem;
+  background:rgba(255,255,255,0.05); color:var(--white); font-family:var(--body); font-size:0.9rem;
 }
 .filedrop{
   border:1px dashed var(--glass-border); border-radius:14px; padding:24px; text-align:center;
   cursor:pointer; color:var(--gray); font-size:0.82rem; transition: border-color .2s, color .2s;
 }
-.filedrop:hover, .filedrop.drag{ border-color:rgba(255,255,255,0.45); color:var(--white); }
+.filedrop:hover, .filedrop.drag{ border-color:rgba(255,255,255,0.5); color:var(--white); }
 .filedrop input{ display:none; }
-.filedrop .fname{ display:block; margin-top:8px; color:var(--white); font-family:var(--mono); font-size:0.72rem; word-break:break-all; }
+.filedrop .fname{ display:block; margin-top:8px; color:var(--white); font-family:var(--mono); font-size:0.7rem; word-break:break-all; }
 .form-actions{ display:flex; gap:10px; margin-top:22px; }
 .btn{
-  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.04em; text-transform:uppercase;
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:0.04em; text-transform:uppercase;
   padding:13px 20px; border-radius:12px; text-decoration:none; cursor:pointer; border:none;
   display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:1;
   transition: transform .2s var(--ease), opacity .2s;
@@ -275,13 +297,19 @@ section.essays{ padding: 60px 6vw 120px; max-width:1180px; margin:0 auto; }
 .btn-ghost{ color:var(--white); background:var(--glass-fill); border:1px solid var(--glass-border); }
 .form-error{ color:#e2a3a3; font-size:0.76rem; margin-top:10px; display:none; font-family:var(--mono); }
 .form-error.show{ display:block; }
+.bg-type-toggle{ display:flex; gap:8px; margin-bottom:16px; }
+.bg-type-toggle button{
+  flex:1; padding:10px; border-radius:10px; border:1px solid var(--glass-border);
+  background:transparent; color:var(--gray); font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; cursor:pointer;
+}
+.bg-type-toggle button.active{ background:var(--white); color:var(--black); border-color:var(--white); }
 
 /* =========================================================
    FOOTER
    ========================================================= */
 footer{
-  text-align:center; padding:40px 6vw 60px; color:var(--gray-dim);
-  font-family:var(--mono); font-size:0.68rem; letter-spacing:0.05em;
+  text-align:center; padding:36px 6vw 56px; color:var(--gray-dim);
+  font-family:var(--mono); font-size:0.66rem; letter-spacing:0.05em; position:relative;
 }
 footer .name{ color:var(--gray); }
 
@@ -289,25 +317,25 @@ footer .name{ color:var(--gray); }
 </head>
 <body>
 
-<div class="bg"></div>
-<div class="blob-field">
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="blob b3"></div>
-</div>
-<div class="streaks"></div>
+<div class="bg-default" id="bgDefault"></div>
+<div class="bg-layer" id="bgLayer" style="display:none;"></div>
+<div class="bg-overlay" id="bgOverlay" style="display:none;"></div>
+
+<button class="bg-control glass" id="bgControlBtn" title="Change background" aria-label="Change background">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+</button>
 
 <main>
 
   <section class="cover">
-    <div class="cover-panel glass">
-      <p class="cover-kicker">AR135-1 · Architectural Essays</p>
-      <h1>Architectural<br>Essays</h1>
+    <div class="cover-inner">
+      <p class="cover-kicker">Architecture Portfolio</p>
+      <h1>housing</h1>
       <div class="cover-rule"></div>
       <div class="cover-meta">
-        <span class="name">Cabando, Luther O.</span>
+        <span class="name">Luther Cabando</span>
         <span class="to">Presented to</span>
-        <span class="prof">Ar. Charles Glen Unidad</span>
+        <span>Ar. Sharmaine Baes</span>
       </div>
     </div>
     <div class="scrollcue">
@@ -316,146 +344,248 @@ footer .name{ color:var(--gray); }
     </div>
   </section>
 
-  <section class="essays" id="essays">
-    <div class="essays-head">
-      <p class="kicker">Reading Room</p>
-      <h2>Essays</h2>
+  <section class="about" id="about">
+    <div class="about-panel glass">
+      <button class="about-edit-btn" id="aboutEditBtn" title="Edit" aria-label="Edit about text">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg>
+      </button>
+      <p class="kicker">About</p>
+      <p class="about-text" id="aboutText"></p>
     </div>
-    <div class="essay-grid" id="essayGrid"></div>
-    <p class="empty-note" id="emptyNote">No essays uploaded yet — use the tile above to add your first PDF.</p>
+  </section>
+
+  <section class="works" id="works">
+    <div class="works-head">
+      <p class="kicker">Selected Works</p>
+      <h2>Portfolio</h2>
+    </div>
+    <div class="masonry" id="masonry"></div>
+    <p class="status-note" id="statusNote"></p>
   </section>
 
 </main>
 
 <footer>
-  Architectural Essays · AR135-1 · <span class="name">Cabando, Luther O.</span>
+  housing · Architecture Portfolio · <span class="name">Luther Cabando</span>
 </footer>
 
-<!-- PDF Viewer Modal -->
+<!-- Preview Modal -->
 <div class="modal-overlay" id="viewerOverlay" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal glass">
     <div class="modal-bar">
-      <h4 id="viewerTitle">Essay</h4>
-      <button class="iconbtn" id="viewerClose" aria-label="Close">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
+      <h4 id="viewerTitle">Work</h4>
+      <div style="display:flex; gap:8px;">
+        <a class="iconbtn" id="viewerDownload" href="#" download title="Download">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        </a>
+        <button class="iconbtn" id="viewerClose" aria-label="Close">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
     </div>
-    <div class="modal-body">
-      <iframe id="viewerFrame" title="PDF preview"></iframe>
+    <div class="modal-body" id="viewerBody"></div>
+  </div>
+</div>
+
+<!-- Add Work Modal -->
+<div class="modal-overlay" id="addOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal form-modal glass">
+    <h4>Add to portfolio</h4>
+    <p class="hint">Any file type — images, video, PDF, drawings, documents.</p>
+    <div class="field">
+      <label for="workTitleInput">Title</label>
+      <input type="text" id="workTitleInput" placeholder="e.g. Housing — Site Plan" maxlength="90">
+    </div>
+    <div class="field">
+      <label>File</label>
+      <div class="filedrop" id="workFileDrop">
+        <span id="workFileDropLabel">Click to choose, or drag a file here</span>
+        <span class="fname" id="workFileName"></span>
+        <input type="file" id="workFileInput">
+      </div>
+    </div>
+    <p class="form-error" id="workFormError"></p>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="workCancel">Cancel</button>
+      <button class="btn btn-primary" id="workSave" disabled>Add</button>
     </div>
   </div>
 </div>
 
-<!-- Add Essay Modal -->
-<div class="modal-overlay" id="addOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+<!-- Background Modal -->
+<div class="modal-overlay" id="bgOverlayModal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal form-modal glass">
-    <h4>Add an essay</h4>
-    <p class="hint">Choose a PDF from your device. It uploads straight to Vercel Blob storage.</p>
+    <h4>Set background</h4>
+    <p class="hint">Upload a photo or video. It replaces the current background for everyone who visits.</p>
     <div class="field">
-      <label for="essayTitleInput">Title</label>
-      <input type="text" id="essayTitleInput" placeholder="e.g. Habitat 67: A Critique" maxlength="80">
-    </div>
-    <div class="field">
-      <label>PDF file</label>
-      <div class="filedrop" id="fileDrop">
-        <span>Click to choose, or drag a PDF here</span>
-        <span class="fname" id="fileName"></span>
-        <input type="file" id="fileInput" accept="application/pdf">
+      <label>Photo or video</label>
+      <div class="filedrop" id="bgFileDrop">
+        <span id="bgFileDropLabel">Click to choose, or drag media here</span>
+        <span class="fname" id="bgFileName"></span>
+        <input type="file" id="bgFileInput" accept="image/*,video/*">
       </div>
     </div>
-    <p class="form-error" id="formError"></p>
+    <p class="form-error" id="bgFormError"></p>
     <div class="form-actions">
-      <button class="btn btn-ghost" id="addCancel">Cancel</button>
-      <button class="btn btn-primary" id="addSave" disabled>Add essay</button>
+      <button class="btn btn-ghost" id="bgCancel">Cancel</button>
+      <button class="btn btn-primary" id="bgSave" disabled>Set background</button>
+    </div>
+  </div>
+</div>
+
+<!-- About Edit Modal -->
+<div class="modal-overlay" id="aboutOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal form-modal glass">
+    <h4>Edit about</h4>
+    <p class="hint">Only visible to you — saving requires your passcode, so other visitors can't change this.</p>
+    <div class="field">
+      <label for="aboutTextInput">Text</label>
+      <textarea id="aboutTextInput" rows="7" maxlength="4000" placeholder="Write a short bio or experience summary…" style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.05); color:var(--white); font-family:var(--body); font-size:0.9rem; resize:vertical;"></textarea>
+    </div>
+    <div class="field">
+      <label for="aboutPasscodeInput">Passcode</label>
+      <input type="password" id="aboutPasscodeInput" placeholder="Your edit passcode">
+    </div>
+    <p class="form-error" id="aboutFormError"></p>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="aboutCancel">Cancel</button>
+      <button class="btn btn-primary" id="aboutSave">Save</button>
     </div>
   </div>
 </div>
 
 <script type="module">
+import { upload } from 'https://esm.sh/@vercel/blob@2.5.0/client';
+
 /* =========================================================
-   Backend: Vercel Blob storage
-   - GET    /api/essays        -> list all essays
-   - DELETE /api/essays?id=... -> remove one essay
-   - POST   /api/upload?id=..&title=.. -> upload a PDF's raw
-            bytes; the server writes them to Blob storage.
-   There's no separate database: each PDF's pathname encodes
-   its own id + title (essays/<id>__<title>.pdf), so the
-   "index" is just whatever Vercel Blob's list() returns.
+   Backend: Vercel Blob storage.
+   - /api/upload issues tokens for portfolio work (any file type)
+   - /api/list reads back everything under works/
+   - /api/background-upload issues tokens for the single
+     background slot (background/current, always overwritten)
+   - /api/background reads the current background
+   - /api/delete removes a work or the background by URL
    ========================================================= */
 
-const grid = document.getElementById('essayGrid');
-const emptyNote = document.getElementById('emptyNote');
+const masonry = document.getElementById('masonry');
+const statusNote = document.getElementById('statusNote');
 
-function essayThumbSVG(){
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-    <path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 16h6M9 10h2"/>
-  </svg>`;
+function setStatus(msg, isError){
+  statusNote.textContent = msg || '';
+  statusNote.classList.toggle('show', !!msg);
+  statusNote.classList.toggle('error', !!isError);
 }
-
-function renderGrid(items){
-  grid.innerHTML = '';
-
-  items.forEach(item => {
-    const card = document.createElement('button');
-    card.className = 'essay-card glass';
-    card.innerHTML = `
-      <div class="essay-thumb">${essayThumbSVG()}</div>
-      <div class="essay-meta">
-        <h3>${escapeHtml(item.title)}</h3>
-        <span class="sub">PDF · Tap to open</span>
-        <div class="essay-remove" title="Remove" data-id="${item.id}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </div>
-      </div>`;
-    card.addEventListener('click', (e) => {
-      if(e.target.closest('.essay-remove')) return;
-      openViewer(item);
-    });
-    card.querySelector('.essay-remove').addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeEssay(item.id);
-    });
-    grid.appendChild(card);
-  });
-
-  const addTile = document.createElement('button');
-  addTile.className = 'add-tile';
-  addTile.innerHTML = `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg>
-    <span>Add essay</span>`;
-  addTile.addEventListener('click', openAddModal);
-  grid.appendChild(addTile);
-
-  emptyNote.classList.toggle('show', items.length === 0);
-}
-
 function escapeHtml(str){
   const d = document.createElement('div');
   d.textContent = str;
   return d.innerHTML;
 }
 
-/* ---------- load ---------- */
-async function loadEssays(){
+function kindOf(item){
+  const ct = (item.contentType || '').toLowerCase();
+  const ext = (item.ext || '').toLowerCase();
+  if(ct.startsWith('image/') || ['.jpg','.jpeg','.png','.gif','.webp','.svg','.avif'].includes(ext)) return 'image';
+  if(ct.startsWith('video/') || ['.mp4','.mov','.webm','.mkv'].includes(ext)) return 'video';
+  if(ct.startsWith('audio/') || ['.mp3','.wav','.m4a'].includes(ext)) return 'audio';
+  if(ct === 'application/pdf' || ext === '.pdf') return 'pdf';
+  return 'file';
+}
+
+function fileIconSVG(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+    <path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 16h6M9 10h2"/>
+  </svg>`;
+}
+function playIconSVG(){
+  return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+}
+
+/* ---------- render ---------- */
+function renderMasonry(items){
+  masonry.innerHTML = '';
+
+  items.forEach(item => {
+    const kind = kindOf(item);
+    const tile = document.createElement('button');
+    tile.className = 'tile glass' + (kind === 'file' || kind === 'audio' ? ' filecard' : '');
+
+    if(kind === 'image'){
+      tile.innerHTML = `<img src="${item.url}" alt="${escapeHtml(item.title)}" loading="lazy">
+        <div class="caption">${escapeHtml(item.title)}</div>
+        <div class="tile-remove" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></div>`;
+    } else if(kind === 'video'){
+      tile.innerHTML = `<video class="thumb" src="${item.url}#t=0.5" muted preload="metadata"></video>
+        <div class="play-badge">${playIconSVG()}</div>
+        <div class="caption">${escapeHtml(item.title)}</div>
+        <div class="tile-remove" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></div>`;
+    } else if(kind === 'pdf'){
+      tile.innerHTML = `<div style="width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center;">${fileIconSVG()}</div>
+        <div class="caption" style="opacity:1; position:static; background:none; padding:12px 14px; text-align:center;">${escapeHtml(item.title)}<br><span style="color:var(--gray)">PDF</span></div>
+        <div class="tile-remove" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></div>`;
+    } else {
+      tile.innerHTML = `${fileIconSVG()}
+        <span class="fname">${escapeHtml(item.title)}</span>
+        <span class="ftype">${kind === 'audio' ? 'Audio' : (item.ext ? item.ext.replace('.', '') : 'File')}</span>
+        <div class="tile-remove" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></div>`;
+    }
+
+    tile.addEventListener('click', (e) => {
+      if(e.target.closest('.tile-remove')) return;
+      openViewer(item, kind);
+    });
+    tile.querySelector('.tile-remove').addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeWork(item);
+    });
+    masonry.appendChild(tile);
+  });
+
+  const addTile = document.createElement('button');
+  addTile.className = 'add-tile';
+  addTile.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg><span>Add work</span>`;
+  addTile.addEventListener('click', openAddModal);
+  masonry.appendChild(addTile);
+
+  setStatus(items.length === 0 ? 'No works uploaded yet — use the tile above to add your first piece.' : '', false);
+}
+
+async function loadWorks(){
   try{
-    const res = await fetch('/api/essays');
-    if(!res.ok) throw new Error('Failed to load essays');
-    const items = await res.json();
-    renderGrid(items);
+    const res = await fetch('/api/list');
+    if(!res.ok) throw new Error('bad response');
+    const data = await res.json();
+    renderMasonry(data.works || []);
   }catch(err){
-    console.error(err);
-    renderGrid([]);
+    masonry.innerHTML = '';
+    setStatus("Couldn't load the portfolio. This only works once the site is deployed on Vercel with Blob storage connected — it won't work opening this file locally.", true);
   }
 }
 
 /* ---------- viewer ---------- */
 const viewerOverlay = document.getElementById('viewerOverlay');
-const viewerFrame = document.getElementById('viewerFrame');
+const viewerBody = document.getElementById('viewerBody');
 const viewerTitle = document.getElementById('viewerTitle');
+const viewerDownload = document.getElementById('viewerDownload');
 
-function openViewer(item){
+function openViewer(item, kind){
   viewerTitle.textContent = item.title;
-  viewerFrame.src = item.url || '';
+  viewerDownload.href = item.url;
+  viewerBody.innerHTML = '';
+
+  if(kind === 'image'){
+    viewerBody.innerHTML = `<img src="${item.url}" alt="${escapeHtml(item.title)}">`;
+  } else if(kind === 'video'){
+    viewerBody.innerHTML = `<video src="${item.url}" controls autoplay></video>`;
+  } else if(kind === 'audio'){
+    viewerBody.innerHTML = `<audio src="${item.url}" controls autoplay></audio>`;
+  } else if(kind === 'pdf'){
+    viewerBody.innerHTML = `<iframe src="${item.url}" title="${escapeHtml(item.title)}"></iframe>`;
+  } else {
+    viewerBody.innerHTML = `<div class="modal-fallback">
+      <p>This file type can't be previewed inline.</p>
+    </div>`;
+  }
+
   viewerOverlay.classList.add('open');
   viewerOverlay.setAttribute('aria-hidden','false');
   document.body.style.overflow = 'hidden';
@@ -464,120 +594,287 @@ function closeViewer(){
   viewerOverlay.classList.remove('open');
   viewerOverlay.setAttribute('aria-hidden','true');
   document.body.style.overflow = '';
-  viewerFrame.src = '';
+  viewerBody.innerHTML = '';
 }
 document.getElementById('viewerClose').addEventListener('click', closeViewer);
 viewerOverlay.addEventListener('click', (e) => { if(e.target === viewerOverlay) closeViewer(); });
 
-/* ---------- add essay ---------- */
+/* ---------- add work ---------- */
 const addOverlay = document.getElementById('addOverlay');
-const titleInput = document.getElementById('essayTitleInput');
-const fileDrop = document.getElementById('fileDrop');
-const fileInput = document.getElementById('fileInput');
-const fileNameLabel = document.getElementById('fileName');
-const addSave = document.getElementById('addSave');
-const addCancel = document.getElementById('addCancel');
-const formError = document.getElementById('formError');
-
-let pendingFile = null;
+const workTitleInput = document.getElementById('workTitleInput');
+const workFileDrop = document.getElementById('workFileDrop');
+const workFileInput = document.getElementById('workFileInput');
+const workFileDropLabel = document.getElementById('workFileDropLabel');
+const workFileName = document.getElementById('workFileName');
+const workSave = document.getElementById('workSave');
+const workCancel = document.getElementById('workCancel');
+const workFormError = document.getElementById('workFormError');
+let pendingWorkFile = null;
 
 function openAddModal(){
-  titleInput.value = '';
-  fileNameLabel.textContent = '';
-  pendingFile = null;
-  formError.classList.remove('show');
-  addSave.disabled = true;
-  addSave.textContent = 'Add essay';
+  workTitleInput.value = '';
+  workFileName.textContent = '';
+  workFileDropLabel.textContent = 'Click to choose, or drag a file here';
+  pendingWorkFile = null;
+  workFormError.classList.remove('show');
+  workSave.disabled = true;
+  workSave.textContent = 'Add';
   addOverlay.classList.add('open');
   addOverlay.setAttribute('aria-hidden','false');
   document.body.style.overflow = 'hidden';
-  setTimeout(() => titleInput.focus(), 200);
+  setTimeout(() => workTitleInput.focus(), 200);
 }
 function closeAddModal(){
   addOverlay.classList.remove('open');
   addOverlay.setAttribute('aria-hidden','true');
   document.body.style.overflow = '';
 }
-addCancel.addEventListener('click', closeAddModal);
+workCancel.addEventListener('click', closeAddModal);
 addOverlay.addEventListener('click', (e) => { if(e.target === addOverlay) closeAddModal(); });
-
-fileDrop.addEventListener('click', () => fileInput.click());
-fileDrop.addEventListener('dragover', (e) => { e.preventDefault(); fileDrop.classList.add('drag'); });
-fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('drag'));
-fileDrop.addEventListener('drop', (e) => {
-  e.preventDefault(); fileDrop.classList.remove('drag');
-  if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+workFileDrop.addEventListener('click', () => workFileInput.click());
+workFileDrop.addEventListener('dragover', (e) => { e.preventDefault(); workFileDrop.classList.add('drag'); });
+workFileDrop.addEventListener('dragleave', () => workFileDrop.classList.remove('drag'));
+workFileDrop.addEventListener('drop', (e) => {
+  e.preventDefault(); workFileDrop.classList.remove('drag');
+  if(e.dataTransfer.files[0]) handleWorkFile(e.dataTransfer.files[0]);
 });
-fileInput.addEventListener('change', () => { if(fileInput.files[0]) handleFile(fileInput.files[0]); });
+workFileInput.addEventListener('change', () => { if(workFileInput.files[0]) handleWorkFile(workFileInput.files[0]); });
 
-function handleFile(file){
-  formError.classList.remove('show');
-  if(file.type !== 'application/pdf'){
-    formError.textContent = 'Please choose a PDF file.';
-    formError.classList.add('show');
+function handleWorkFile(file){
+  workFormError.classList.remove('show');
+  const maxBytes = 200 * 1024 * 1024;
+  if(file.size > maxBytes){
+    workFormError.textContent = 'That file is over 200MB. Please use a smaller file.';
+    workFormError.classList.add('show');
     return;
   }
-  pendingFile = file;
-  fileNameLabel.textContent = file.name;
-  checkReady();
+  pendingWorkFile = file;
+  workFileName.textContent = file.name;
+  checkWorkReady();
+}
+workTitleInput.addEventListener('input', checkWorkReady);
+function checkWorkReady(){
+  workSave.disabled = !(workTitleInput.value.trim() && pendingWorkFile);
 }
 
-titleInput.addEventListener('input', checkReady);
-function checkReady(){
-  addSave.disabled = !(titleInput.value.trim() && pendingFile);
-}
-
-addSave.addEventListener('click', async () => {
-  const title = titleInput.value.trim();
-  if(!title || !pendingFile) return;
-
-  addSave.disabled = true;
-  addSave.textContent = 'Uploading…';
-  formError.classList.remove('show');
+workSave.addEventListener('click', async () => {
+  const title = workTitleInput.value.trim();
+  if(!title || !pendingWorkFile) return;
+  workFormError.classList.remove('show');
+  workSave.disabled = true;
+  workSave.textContent = 'Uploading…';
 
   try{
-    const id = 'e' + Date.now();
-    const params = new URLSearchParams({ id, title });
-
-    const res = await fetch('/api/upload?' + params.toString(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/pdf' },
-      body: pendingFile,
+    const dot = pendingWorkFile.name.lastIndexOf('.');
+    const ext = dot >= 0 ? pendingWorkFile.name.slice(dot) : '';
+    const pathname = `works/${Date.now()}__${encodeURIComponent(title)}${ext}`;
+    await upload(pathname, pendingWorkFile, {
+      access: 'public',
+      handleUploadUrl: '/api/upload',
     });
-
-    if(!res.ok){
-      const errBody = await res.json().catch(() => ({}));
-      throw new Error(errBody.error || ('Upload failed (' + res.status + ')'));
-    }
-
-    await loadEssays();
     closeAddModal();
+    await loadWorks();
   }catch(err){
-    console.error(err);
-    formError.textContent = 'Upload failed: ' + (err.message || 'unknown error');
-    formError.classList.add('show');
-    addSave.disabled = false;
-  }finally{
-    addSave.textContent = 'Add essay';
+    workFormError.textContent = 'Upload failed: ' + (err.message || 'please try again.');
+    workFormError.classList.add('show');
+    workSave.disabled = false;
+    workSave.textContent = 'Add';
   }
 });
 
-/* ---------- remove essay ---------- */
-async function removeEssay(id){
+async function removeWork(item){
   try{
-    const res = await fetch('/api/essays?id=' + encodeURIComponent(id), { method: 'DELETE' });
-    if(!res.ok) throw new Error('Delete failed');
-    await loadEssays();
+    const res = await fetch('/api/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: item.url }),
+    });
+    if(!res.ok) throw new Error('delete failed');
+    await loadWorks();
   }catch(err){
-    console.error(err);
+    setStatus("Couldn't remove that item — try again.", true);
   }
 }
+
+/* =========================================================
+   BACKGROUND
+   ========================================================= */
+const bgDefault = document.getElementById('bgDefault');
+const bgLayer = document.getElementById('bgLayer');
+const bgOverlay = document.getElementById('bgOverlay');
+const bgControlBtn = document.getElementById('bgControlBtn');
+const bgOverlayModal = document.getElementById('bgOverlayModal');
+const bgFileDrop = document.getElementById('bgFileDrop');
+const bgFileInput = document.getElementById('bgFileInput');
+const bgFileDropLabel = document.getElementById('bgFileDropLabel');
+const bgFileName = document.getElementById('bgFileName');
+const bgSave = document.getElementById('bgSave');
+const bgCancel = document.getElementById('bgCancel');
+const bgFormError = document.getElementById('bgFormError');
+let pendingBgFile = null;
+
+async function loadBackground(){
+  try{
+    const res = await fetch('/api/background');
+    const data = await res.json();
+    if(data.url){
+      const isVideo = (data.contentType || '').startsWith('video/');
+      bgLayer.innerHTML = isVideo
+        ? `<video src="${data.url}" autoplay muted loop playsinline></video>`
+        : `<img src="${data.url}" alt="Background">`;
+      bgLayer.style.display = 'block';
+      bgOverlay.style.display = 'block';
+      bgDefault.style.display = 'none';
+    }else{
+      bgLayer.style.display = 'none';
+      bgOverlay.style.display = 'none';
+      bgDefault.style.display = 'block';
+    }
+  }catch(err){
+    // keep default background silently
+  }
+}
+
+function openBgModal(){
+  bgFileName.textContent = '';
+  bgFileDropLabel.textContent = 'Click to choose, or drag media here';
+  pendingBgFile = null;
+  bgFormError.classList.remove('show');
+  bgSave.disabled = true;
+  bgSave.textContent = 'Set background';
+  bgOverlayModal.classList.add('open');
+  bgOverlayModal.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+}
+function closeBgModal(){
+  bgOverlayModal.classList.remove('open');
+  bgOverlayModal.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+bgControlBtn.addEventListener('click', openBgModal);
+bgCancel.addEventListener('click', closeBgModal);
+bgOverlayModal.addEventListener('click', (e) => { if(e.target === bgOverlayModal) closeBgModal(); });
+bgFileDrop.addEventListener('click', () => bgFileInput.click());
+bgFileDrop.addEventListener('dragover', (e) => { e.preventDefault(); bgFileDrop.classList.add('drag'); });
+bgFileDrop.addEventListener('dragleave', () => bgFileDrop.classList.remove('drag'));
+bgFileDrop.addEventListener('drop', (e) => {
+  e.preventDefault(); bgFileDrop.classList.remove('drag');
+  if(e.dataTransfer.files[0]) handleBgFile(e.dataTransfer.files[0]);
+});
+bgFileInput.addEventListener('change', () => { if(bgFileInput.files[0]) handleBgFile(bgFileInput.files[0]); });
+
+function handleBgFile(file){
+  bgFormError.classList.remove('show');
+  if(!file.type.startsWith('image/') && !file.type.startsWith('video/')){
+    bgFormError.textContent = 'Please choose a photo or video file.';
+    bgFormError.classList.add('show');
+    return;
+  }
+  const maxBytes = 200 * 1024 * 1024;
+  if(file.size > maxBytes){
+    bgFormError.textContent = 'That file is over 200MB. Please use a smaller one.';
+    bgFormError.classList.add('show');
+    return;
+  }
+  pendingBgFile = file;
+  bgFileName.textContent = file.name;
+  bgSave.disabled = false;
+}
+
+bgSave.addEventListener('click', async () => {
+  if(!pendingBgFile) return;
+  bgFormError.classList.remove('show');
+  bgSave.disabled = true;
+  bgSave.textContent = 'Uploading…';
+  try{
+    await upload('background/current', pendingBgFile, {
+      access: 'public',
+      handleUploadUrl: '/api/background-upload',
+    });
+    closeBgModal();
+    await loadBackground();
+  }catch(err){
+    bgFormError.textContent = 'Upload failed: ' + (err.message || 'please try again.');
+    bgFormError.classList.add('show');
+    bgSave.disabled = false;
+    bgSave.textContent = 'Set background';
+  }
+});
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+const aboutText = document.getElementById('aboutText');
+const aboutEditBtn = document.getElementById('aboutEditBtn');
+const aboutOverlay = document.getElementById('aboutOverlay');
+const aboutTextInput = document.getElementById('aboutTextInput');
+const aboutPasscodeInput = document.getElementById('aboutPasscodeInput');
+const aboutSave = document.getElementById('aboutSave');
+const aboutCancel = document.getElementById('aboutCancel');
+const aboutFormError = document.getElementById('aboutFormError');
+
+async function loadAbout(){
+  try{
+    const res = await fetch('/api/about');
+    const data = await res.json();
+    aboutText.textContent = data.text || '';
+  }catch(err){
+    // leave the empty-state placeholder showing
+  }
+}
+
+function openAboutModal(){
+  aboutTextInput.value = aboutText.textContent || '';
+  aboutPasscodeInput.value = '';
+  aboutFormError.classList.remove('show');
+  aboutSave.disabled = false;
+  aboutSave.textContent = 'Save';
+  aboutOverlay.classList.add('open');
+  aboutOverlay.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => aboutTextInput.focus(), 200);
+}
+function closeAboutModal(){
+  aboutOverlay.classList.remove('open');
+  aboutOverlay.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+aboutEditBtn.addEventListener('click', openAboutModal);
+aboutCancel.addEventListener('click', closeAboutModal);
+aboutOverlay.addEventListener('click', (e) => { if(e.target === aboutOverlay) closeAboutModal(); });
+
+aboutSave.addEventListener('click', async () => {
+  aboutFormError.classList.remove('show');
+  aboutSave.disabled = true;
+  aboutSave.textContent = 'Saving…';
+  try{
+    const res = await fetch('/api/about', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: aboutTextInput.value,
+        passcode: aboutPasscodeInput.value,
+      }),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Save failed');
+    closeAboutModal();
+    await loadAbout();
+  }catch(err){
+    aboutFormError.textContent = err.message || 'Save failed — try again.';
+    aboutFormError.classList.add('show');
+    aboutSave.disabled = false;
+    aboutSave.textContent = 'Save';
+  }
+});
 
 document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape'){ closeViewer(); closeAddModal(); }
+  if(e.key === 'Escape'){ closeViewer(); closeAddModal(); closeBgModal(); closeAboutModal(); }
 });
 
-loadEssays();
+loadWorks();
+loadBackground();
+loadAbout();
 </script>
 
 </body>
